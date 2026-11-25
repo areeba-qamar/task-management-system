@@ -1,4 +1,4 @@
-import { registerUser } from '../services/authService.js';
+import { registerUser, loginUser } from '../services/authService.js';
 
 export const register = async (req, res) => {
     try {
@@ -50,6 +50,40 @@ export const register = async (req, res) => {
             message: status === 409
                 ? 'User already exists'
                 : 'Registration failed'
+        });
+    }
+};
+
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body ?? {};
+
+        if (
+            typeof email !== 'string' ||
+            typeof password !== 'string' ||
+            !email.trim() ||
+            !password
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email and password are required'
+            });
+        }
+
+        const user = await loginUser(email, password);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Login successful',
+            data: user
+        });
+
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.statusCode === 401
+                ? 'Invalid email or password'
+                : 'Login failed'
         });
     }
 };
