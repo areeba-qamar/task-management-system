@@ -1,4 +1,8 @@
-import { createProject } from '../services/projectService.js';
+import { 
+         createProject,
+         getAllProjects, 
+         getProjectById
+        } from '../services/projectService.js';
 
 export const create = async (req, res) => {
     try {
@@ -34,6 +38,45 @@ export const create = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Failed to create project'
+        });
+    }
+};
+export const getAll = async (req, res) => {
+    try {
+        const projects = await getAllProjects(req.user._id);
+
+        return res.status(200).json({
+            success: true,
+            count: projects.length,
+            data: projects
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve projects'
+        });
+    }
+};
+
+export const getById = async (req, res) => {
+    try {
+        const project = await getProjectById(
+            req.params.id,
+            req.user._id
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: project
+        });
+
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.statusCode
+                ? error.message
+                : 'Failed to retrieve project'
         });
     }
 };
