@@ -40,3 +40,26 @@ export const getProjectById = async (projectId, userId) => {
 
 //We're filtering by both project ID and owner ID. This ensures that even if another user knows your project ID, they cannot retrieve your project.
 //This is called resource-level authorization.
+
+//------------------------------------------------------
+
+
+export const updateProject = async (projectId, userId, updates) => {
+    const project = await getProjectById(projectId, userId);
+
+    if (updates.name !== undefined) {
+        project.name = updates.name;
+    }
+
+    if (updates.description !== undefined) {
+        project.description = updates.description;
+    }
+
+    return await project.save();
+};
+
+export const deleteProject = async (projectId, userId) => {
+    const project = await getProjectById(projectId, userId);
+
+    await project.deleteOne();
+};

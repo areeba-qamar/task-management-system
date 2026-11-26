@@ -1,7 +1,9 @@
 import { 
          createProject,
          getAllProjects, 
-         getProjectById
+         getProjectById,
+         updateProject,
+         deleteProject
         } from '../services/projectService.js';
 
 export const create = async (req, res) => {
@@ -77,6 +79,81 @@ export const getById = async (req, res) => {
             message: error.statusCode
                 ? error.message
                 : 'Failed to retrieve project'
+        });
+    }
+};
+
+export const update = async (req, res) => {
+    try {
+        const { name, description } = req.body ?? {};
+
+        if (name === undefined && description === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: 'At least one field is required'
+            });
+        }
+
+        if (
+            name !== undefined &&
+            (typeof name !== 'string' || !name.trim())
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid project name'
+            });
+        }
+
+        if (
+            description !== undefined &&
+            typeof description !== 'string'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Description must be a string'
+            });
+        }
+
+        const project = await updateProject(
+            req.params.id,
+            req.user._id,
+            { name, description }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Project updated successfully',
+            data: project
+        });
+
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.statusCode
+                ? error.message
+                : 'Failed to update project'
+        });
+    }
+};
+
+export const remove = async (req, res) => {
+    try {
+        await deleteProject(
+            req.params.id,
+            req.user._id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Project deleted successfully'
+        });
+
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.statusCode
+                ? error.message
+                : 'Failed to delete project'
         });
     }
 };

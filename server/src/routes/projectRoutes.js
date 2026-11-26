@@ -1,7 +1,9 @@
 import express from 'express';
 import { create,
          getAll,
-         getById
+         getById,
+         update,
+         remove
 } from '../controllers/projectController.js';
 
 import { protect } from '../middleware/authMiddleware.js';
@@ -13,5 +15,7 @@ router.use(protect);    //This applies authentication middleware to all subseque
 router.post('/', create);
 router.get('/', getAll);
 router.get('/:id', getById);
+router.put('/:id', update);
+router.delete('/:id', remove);
 
 export default router;
