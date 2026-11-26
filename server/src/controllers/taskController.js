@@ -1,4 +1,7 @@
-import { createTask } from '../services/taskService.js';
+import { createTask,
+         getAllTasks,
+         getTaskById
+} from '../services/taskService.js';
 
 export const create = async (req, res) => {
     try {
@@ -66,6 +69,44 @@ export const create = async (req, res) => {
             message: error.statusCode
                 ? error.message
                 : 'Failed to create task'
+        });
+    }
+};
+
+export const getAll = async (req, res) => {
+    try {
+        const tasks = await getAllTasks(req.user._id);
+
+        return res.status(200).json({
+            success: true,
+            count: tasks.length,
+            data: tasks
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve tasks'
+        });
+    }
+};
+
+export const getById = async (req, res) => {
+    try {
+        const task = await getTaskById(
+            req.params.id,
+            req.user._id
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: task
+        });
+    } catch (error) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.statusCode
+                ? error.message
+                : 'Failed to retrieve task'
         });
     }
 };

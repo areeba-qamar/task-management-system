@@ -1,5 +1,8 @@
 import express from 'express';
-import { create } from '../controllers/taskController.js';
+import { create,
+         getAll,
+         getById
+ } from '../controllers/taskController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -7,5 +10,7 @@ const router = express.Router();
 router.use(protect);
 
 router.post('/', create);
+router.get('/', getAll);
+router.get('/:id', getById);
 
 export default router;
